@@ -1,0 +1,136 @@
+\section{Testing} \label{sec:testing}
+\subsection{Unit Tests}
+You should write unit tests for the isolated components of your CPU
+such as the register file, decoder, and ALU in \verb|hardware/sim|.
+The tests should contain assertions and check correct behavior
+under several common and extreme conditions.
+
+Run them just like you did in the labs.
+For example, after you write \verb|sim/your_tb.v|, run \\
+\verb|make sim/your_tb.fst| (iverilog) or \verb|make sim/your_tb.vpd| (VCS).
+View the waveforms with \verb|gtkwave sim/your_tb.fst &| or \verb|dve -vpd sim/your_tb.vpd &|.
+
+\subsection{Assembly Tests}
+Once you connected the instruction memory in the instruction fetch stage and the data memory in the memory stage,
+you should be able to run assembly tests using \verb|hardware/sim/asm_tb.v|.
+Edit \verb|software/asm/start.s| by hand to add other tests you want.
+It will be loaded into the instruction memory by the testbench,
+where the \verb|RESET_PC| parameter is set to start the test in the IMEM instead of the BIOS.
+Make sure you have used it in \verb|riscv_core/cpu.v|.
+
+Initially, and if you change \verb|start.s|, you need to run \verb|make| in \verb|software|
+before running simulation.
+
+The \verb|start.s| contains the following instructions.
+\begin{minted}{asm}
+  # Test ADD
+  li x10, 100         # Load argument 1 (rs1)
+  li x11, 200         # Load argument 2 (rs2)
+  add x1, x10, x11    # Execute the instruction being tested
+  li x20, 1           # Set the flag register for the testbench
+  # Now we check that x1 contains 300 in the testbench
+\end{minted}
+The \verb|asm_tb| toggles the clock one cycle at time and waits for register \verb|x20|
+to be written with a particular value (in the above example: 1).
+Once \verb|x20| contains 1, the testbench inspects the value in \verb|x1|
+and checks if it is 300, which indicates your processor correctly executed the add instruction.
+
+If the testbench times out it means \verb|x20| never became 1,
+so the processor got stuck somewhere or \verb|x20| was written with another value.
+
+You should add your own tests to verify that your processor can execute
+different instructions correctly.
+Modify and compile \verb|start.s| with your tests, add your checks to \verb|asm_tb.v|,
+and then rerun the RTL simulation.
+
+\subsection{CPU Test}
+Once you are confident that your processor is working,
+you will want to perform a comprehensive test.
+The provided \verb|sim/cpu_tb.v| tests all the RV32I instructions.
+
+To pass this testbench, you should have a working CPU implementation that can decode and execute
+all the instructions in the spec, including the CSR instructions.
+Several basic hazard cases are also tested.
+
+Unlike other testbenches, this testbench does not work with any software code,
+but rather it manually initializes the instructions and data in the memory blocks
+as well as the register file content for each test.
+The testbench does not cover reading from BIOS memory nor memory mapped IO.
+
+\subsection{RISC-V ISA Tests}
+These are tests developed in the RISC-V community.
+To run the tests, run \verb|make isa-tests| or \verb|make sim/isa/lw.fst| for a specific test.
+
+The simulation log details which tests passed and failed and the number of clock cycles elapsed.
+If you're failing a test, debug using the generated assembly dump in
+\verb|software/riscv-isa-tests|.
+
+The assembly dump files are extremely helpful in debugging at this stage.
+If you look into a particular dump file of a test (e.g., \verb|add.dump|),
+it contains several subtests in series.
+The CSR output from the simulation indicates which subtest is failing
+to help you narrow down where the problem is, and you can start debugging from there.
+
+\subsection{C Tests}
+Next, you will test your processor with some small RISC-V C programs.
+The C tests are in \verb|software/c_tests|.
+You should go into each folder, understand what the program is trying to do.
+The available tests are \verb|strcmp|, \verb|vecadd|, \verb|fib|, \verb|sum|,
+\verb|replace|, and \verb|cachetest|.
+
+To run the test, run \verb|make c-tests| or \verb|make sim/c_tests/fib.fst| for a specific program.
+These tests could help reveal more hazard bugs in your implementation.
+\verb|strcmp| is particularly important since it is frequently used in the BIOS program.
+
+The tests use CSR instruction to indicate if they are passed
+(e.g., write 1 to the CSR register if passed).
+Following that practice, you can also write your custom C programs to further test your CPU.
+
+As an additional tip for debugging, try changing the compiler optimization flag in the Makefile
+of each software test (e.g., \verb|-O2| to \verb|-O1| or \verb|-O0|),
+and see if your processor still passes the test.
+Different compiler settings generate different sequences of assembly instructions,
+and some might expose subtle hazard bugs yet to be covered by your implementation.
+
+\subsection{UART and Echo Tests}
+You should have your UART modules integrated with the CPU before running these tests.
+These tests verify if your CPU is able to: check the UART status,
+read a character from UART Receiver, and write a character to UART Transmitter.
+
+Take a look at the software code \verb|software/echo/echo.c| to see what it does.
+The testbench sends several characters over the serial rx line and sees if they are returned correctly.
+The \verb|software/uart_parse/uart_parse.c| emulates the first few instructions of BIOS program.
+The testbench checks if it sends and receives the correct sequence.
+
+\subsection{MMIO Counter Test}
+This test executes NOPs and a for loop with 10 iterations,
+and prints out the values of counters for each.
+You don't need to implement the branch related counters for this checkpoint.
+
+Remember that we don't include NOPs in the instruction count,
+and that only the completed instructions are counted
+(the instructions that have passed the last stage of your pipeline).
+The expected values for the instruction counts are around
+2 (reset counters and load cycle count)
+and 23 (loop initialization and 2 * 10 for loop iterations besides the previous two).
+
+\subsection{BIOS Test}
+We have provided a BIOS program in \verb|software/bios| that allows you to interact
+with your CPU and download other programs over UART.
+The BIOS program is an infinite loop that reads from the UART,
+checks if the input string matches a known control sequence,
+and then performs an associated action.
+For detailed information on the BIOS, see Section \ref{sec:bios}.
+
+The BIOS testbench \verb|sim/bios_tb.v| emulates the interaction between
+the host and your CPU via the serial lines orchestrated by the BIOS program.
+It tests four basic functions of the BIOS program:
+\begin{itemize}
+\item sending an invalid command
+\item storing to an address (in IMEM or DMEM)
+\item loading from an address (in IMEM or DMEM)
+\item jumping to an address (from BIOSMEM to IMEM)
+\end{itemize}
+
+
+\newpage

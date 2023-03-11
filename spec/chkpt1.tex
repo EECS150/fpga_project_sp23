@@ -1,0 +1,93 @@
+\section{\blockDiagramTaskName: Block Diagram of RISC-V CPU}
+
+This checkpoint is designed to guide the development of a three-stage pipelined RISC-V CPU
+described in Section \ref{sec:spec}.
+
+The second checkpoint will require significantly more time and effort than the first one.
+As such, completing the first checkpoint (block diagram) in time for the design review is crucial to your success in this project.
+
+Commit your block diagram and write-up to your team repository under \verb|docs|.
+
+
+\subsection{Block Diagram}
+The first checkpoint requires a detailed block diagram of your datapath.
+The diagram should have a greater level of detail than a high level RISC datapath diagram.
+You may complete this electronically or by hand,
+but we strongly recommend writing it electrically.
+You can use Adobe Illustrator, Inkscape, Google Drawings, draw.io or any program you want.
+If working by hand, we recommend working in pencil and combining several sheets of paper for a larger workspace.
+
+You should create a comprehensive and detailed design/schematic.
+Enumerate all the control signals that you will need.
+Be careful when designing the memory fetch stage
+since all the memories we use (BIOS, instruction, data, IO) are synchronous.
+You should be able to describe in detail any smaller sub-blocks in your diagram.
+
+Although the diagrams from textbooks/lecture notes are a decent starting place,
+remember that they often use asynchronous-read RAMs for the instruction and data memories,
+and we will be using synchronous-read Block RAMs.
+Therefore, we have one stage after IMEM,
+one stage after DMEM (write-back to register file at the end of this stage),
+and another stage in-between.
+Note that the stages before IMEM (e.g. program counter) are not included in the stage count.
+The reason behind is that Block RAMs in FPGA have a long clk-to-q delay and a small setup time.
+
+
+\subsection{Questions}
+Besides the block diagram, you will be asked to provide short answers to the following questions based on how you structure your block diagram.
+Write up your answers in any format.
+The questions are intended to make you consider all possible cases that might happen when your processor execute instructions, such as data or control hazards.
+It might be a good idea to take a moment to think of the questions first, then draw your diagram to address them.
+
+\begin{enumerate}
+\item How many stages is the datapath you've drawn? (i.e. How many cycles does it take to execute one instruction?)
+\item How do you handle ALU $\rightarrow$ ALU hazards?
+  \begin{minted}{asm}
+    addi x1, x2, 100 
+    addi x2, x1, 100
+  \end{minted}
+\item How do you handle ALU $\rightarrow$ MEM hazards?
+  \begin{minted}{asm}
+    addi x1, x2, 100
+    sw   x1, 0(x3)
+    \end{minted}
+\item How do you handle MEM $\rightarrow$ ALU hazards?
+  \begin{minted}{asm}
+    lw   x1, 0(x3)
+    addi x1, x1, 100
+  \end{minted}
+\item How do you handle MEM $\rightarrow$ MEM hazards?
+  \begin{minted}{asm}
+    lw   x1, 0(x2)
+    sw   x1, 4(x2)
+  \end{minted}
+  also consider:
+  \begin{minted}{asm}
+    lw   x1, 0(x2)
+    sw   x3, 0(x1)
+  \end{minted}
+\item Do you need special handling for 2 cycle apart hazards?
+  \begin{minted}{asm}
+    addi x1, x2, 100
+    nop
+    addi x1, x1, 100
+\end{minted}
+\item How do you handle branch control hazards?
+  (What prediction scheme are you using, or are you just injecting NOPs until the branch is resolved?
+  If any prediction is done, what is the mispredict latency?
+  What about data hazards in the branch?)
+\item How do you handle jump control hazards?
+  Consider jal and jalr separately.
+\item What is the most likely critical path in your design?
+\item Where do the UART modules, instruction, and cycle counters go?
+  How are you going to drive \verb|uart_tx_data_in_valid| and \verb|uart_rx_data_out_ready|?
+\item What is the role of the CSR register? Where does it go?
+\item When do we read from the BIOS memory for instructions?
+  When do we read from IMEM for instructions?
+  How do we switch from BIOS address space to IMEM address space?
+  In which case can we write to IMEM, and why do we need to write to IMEM?
+  How do we know if a memory instruction is intended for DMEM or any IO device?
+\end{enumerate}
+
+
+\newpage

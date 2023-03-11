@@ -1,0 +1,160 @@
+\section{Setup}
+
+\subsection{Creating Your Repository}
+Create a repository for your team by accepting the GitHub Classroom assignment, the link should have been posted on Ed.
+The first member needs to create a team when accepting the assignment, where naming of the group is up to you.
+The other member should join the team created by the first member.
+
+Your repository is initially empty,
+Import the project skeleton as follows:
+
+\begin{minted}[tabsize=2]{bash}
+  git clone git@github.com:EECS151-sp23/fpga_project_sp23-<your team name>.git
+  cd fpga_project_sp23-<your team name>
+  git remote add skeleton https://github.com/EECS150/fpga_project_sp23.git
+  git pull skeleton main
+  git push -u origin main
+\end{minted}
+
+To pull project updates from the skeleton repository (you will be notifed through Ed), run the following:
+\begin{minted}[tabsize=2]{bash}
+  git pull skeleton main
+  git push
+\end{minted}
+while you can pull updates made by the other team member simply by \verb|git pull| after the other did \verb|git push|.
+Resolve merge conflict carefully if it happens.
+
+Remember to push your changes to the remote repository frequently.
+\textbf{We are not responsible for any loss of your data.}
+No extensions will be given for that reason.
+
+
+\subsection{Integrating Designs from Labs}
+You should copy some modules you designed from the labs, overwriting the provided skeleton files in \verb|hardware/src/io_circuits|.
+
+\textbf{Files to copy from the labs:}
+\begin{minted}{bash}
+  debouncer.v
+  synchronizer.v
+  edge_detector.v
+  uart_transmitter.v
+\end{minted}
+
+
+\subsection{Project Skeleton Overview}
+\begin{itemize}
+\item \verb|hardware|
+  \begin{itemize}
+  \item \verb|src|
+    \begin{itemize}
+    \item \verb|z1top.v|:
+      Top level module. Your RISC-V CPU is instantiated here.
+    \item \verb|z1top.xdc|:
+      Constraint file for the top level module.
+    \item \verb|EECS151.v|:
+      The EECS151 register library. Some bugs have been fixed.
+    \item \verb|clk_wiz.v|:
+      Generates a clock signal for your CPU.
+    \item \verb|io_circuits|:
+      IO circuits from previous lab exercises.
+    \item \verb|riscv_core/cpu.v|:
+      Your RISC-V CPU design goes here.
+      Some modules are provided.
+      Don't change the names of provided modules and signals.
+    \item \verb|riscv_core/opcode.vh|:
+      Constant definitions for RISC-V opcodes and funct codes.
+    \end{itemize}
+  \item \verb|sim|
+    \begin{itemize}
+    \item \verb|asm_tb.v|:
+      The testbench works with the software in \verb|software/asm|.
+      The hex file will be written to the instruction/data memories.
+    \item \verb|cpu_tb.v|:
+      The testbench checks if your CPU can execute all the RV32I instructions (including CSR instructions) correctly,
+      and can handle some simple hazards.
+      This testbench directly edits the contents of the register file and the instruction/data memories for tests.
+    \item \verb|isa_tb.v|:
+      The testbench works with the RISC-V ISA test suite in \\ \verb|software/riscv-isa-tests|.
+      We use 38 tests from the test suite.
+      The testbench only runs one test at a time.
+      To run all tests, run \verb|make isa-tests|.
+      The hex file will be written to the instruction/data memories.
+    \item \verb|c_tests_tb.v|:
+      The testbench verifies the correct execution of the software in \verb|software/c_tests|.
+      There are 6 tests provided.
+      The hex file will be written to the instruction/data memories.
+    \item \verb|uart_parse_tb.v|:
+      The testbench works with the software in \verb|software/uart_parse|.
+      It performs a simple write/read using the serial rx/tx lines.
+      The hex file will be written to the instruction/data memories.
+    \item \verb|echo_tb.v|:
+      The testbench works with the software in \verb|software/echo|.
+      The CPU reads a character sent from the serial rx line and echoes it back to the serial tx line.
+      The hex file will be written to the instruction/data memories.
+    \item \verb|mmio_counter_tb.v|:
+      The testbench runs a small set of instructions and print out the memory mapped I/O counter values.
+      This testbench directly edits the contents of the register file and the instruction/data memories for tests.
+    \item \verb|bios_tb.v|:
+      The testbench simulates the execution of the BIOS program in \\ \verb|software/bios|.
+      It checks if your CPU can execute the instructions stored in the BIOS memory.
+      The testbench also emulates user input sent over the serial rx line,
+      and checks the BIOS message output obtained from the serial tx line.
+    \item \verb|mem_path.vh|:
+      Specifies the location of register file and memories.
+      Some testbenches refer to this file to edit/check their values.
+    \end{itemize}
+  \item \verb|scripts|:
+    \begin{itemize}
+      \item \verb|run_all_sims.py|:
+        Python script that runs all testbenches above other than \\
+        \verb|mmio_counter_tb.v|.
+      \item \verb|hex_to_serial.py|:
+        Python script that sends a hex file to the FPGA through the serial rx line.
+      \item \verb|*.tcl|:
+        Scripts for Xilinx Vivado.
+    \end{itemize}
+  \item \verb|Makefile|:
+    Makefile.
+  \item \verb|README.md|:
+    Explains make commands.
+  \item \verb|stubs, sim_models|:
+    Other modules from Xilinx library.
+  \end{itemize}
+\item \verb|software|
+  \begin{itemize}
+  \item \verb|Makefile, Makefrag|:
+    Makefiles.
+  \item \verb|151_library|:
+    Files needed to compile software for our RISC-V CPU.
+  \item \verb|asm|:
+    Template of assembly tests.
+    Modify this for a particular test you want to perform.
+  \item \verb|riscv-isa-tests|:
+    Tests from the RISC-V ISA test suite will be compiled here.
+  \item \verb|c_tests|:
+    Example C programs for tests.
+    You may add a new one.
+  \item \verb|uart_parse|:
+    Simple tests using UART ports.
+  \item \verb|echo|:
+    The echo program, refer to the explanation for \verb|echo_tb.v| above.
+  \item \verb|bios|:
+    The BIOS program, which allows us to interact with our CPU via the UART.
+  \item \verb|mmult|:
+    This is a program to be run on the FPGA board.
+    It generates 2 matrices and multiplies them.
+    Then it returns a checksum to verify the correct result.
+  \end{itemize}
+\item \verb|tips|
+  \begin{itemize}
+  \item \verb|fpga_checkout.md|:
+    You may bring one FPGA to your home.
+    Explains how to set up the environment and program the FPGA using Vivado in the instructional server.
+  \end{itemize}
+\item \verb|spec|:
+  This specification document is located in this directory.
+\item \verb|docs|:
+  Documentation of your design goes to this directory.
+\end{itemize}
+
+\newpage

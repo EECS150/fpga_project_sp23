@@ -1,0 +1,79 @@
+\section{Introduction}
+The goal of this project is to familiarize EECS151/251A students with the methods and tools of digital design.
+Working alone or in a team of two, you will design and implement a 3-stage pipelined RISC-V CPU with a UART for tethering and a simple branch predictor.
+Finally, you will optimize your CPU.
+
+You will use Verilog to implement this system, targeting the Xilinx PYNQ platform (a PYNQ-Z1 development board with a Zynq 7000-series FPGA).
+The project will give you experience designing with RTL descriptions, resolving hazards in a simple pipeline, building interfaces, and teach you how to approach system-level optimization.
+
+In tackling these challenges, your first step will be to map the high level specification to a design which can be translated into a hardware implementation.
+After that, you will produce and debug that implementation.
+These first steps can take significant time if you have not thought out your design prior to trying implementation.
+
+As in previous semesters, your EECS151/251A project is probably the largest project you have faced so far here at Berkeley.
+Good time management and good design organization is critical to your success.
+
+
+\subsection{Tentative Deadlines}
+The following is a brief description of each checkpoint and approximately how many weeks will be alloted to each one.
+Note that this schedule is tentative and is subjected to change as the semester progresses.
+
+\begin{minipage}{\textwidth}
+\vspace{2mm}
+\begin{itemize}
+\item \textbf{\blockDiagramDueDate \space - \blockDiagramTaskName \space (\blockDiagramTimeAlloted)} -
+  Draw a schematic of your processor's datapath and pipeline stages,
+  and provide a brief write-up of your answers to the questions.
+  Also commit your design documents (block diagram + write-up) to \verb|docs|.
+
+\item \textbf{\baseCPUDueDate \space - \baseCPUTaskName \space (\baseCPUTimeAlloted)} -
+  Implement a fully functional RISC-V processor core in Verilog.
+  Your processor core should be able to run the \textbf{mmult} demo successfully.
+
+\item \textbf{\branchPredictorDueDate \space - \branchPredictorTaskName \space (\branchPredictorTimeAlloted)} -
+  Implement a branch predictor.
+  
+\item \textbf{\finalCheckoffDueDate \space - Final Checkoff} -
+  Processor optimization and checkoff.
+    
+\item \textbf{\finalReportDueDate \space - Project Report} -
+  Project report due.
+\end{itemize}
+\vspace{2mm}
+\end{minipage}
+
+
+\clearpage
+\subsection{Grading}
+\begin{framed}
+\begin{description}
+\item[70\%] {\bf Functionality} at the final checkoff.
+  You need to show your design passes all testbenches
+  and executes \verb|mmult| correctly on the FPGA board.
+\item[15\%] {\bf Optimization} at the final checkoff.
+  The quality of your design according to the figure of merit (TBD).
+  This score is contingent on implementing all the required functionality.
+  A malfunctioning design will receive a zero in this category.
+\item[5\%] {\bf Checkpoints}.
+  You are graded on the functionality for each completed checkpoint at the checkpoint deadline.
+  The total of these scores makes up 5\% of your project grade.
+  The weight of each checkpoint's score may vary.
+\item[10\%] {\bf Project report}.
+  The final report summarizing your project.
+\end{description}
+\end{framed}
+
+
+\subsection{General Project Tips}
+Document your project as you go.
+You should comment your Verilog and keep your diagrams up to date.
+Aside from the final project report (you will need to turn in a report documenting your project),
+you can use your design documents to help the debugging process.
+
+Finish the required features first.
+Optimize your design after everything works well.
+You should fully utilize the version control system (Git) to maintain a functioning design
+while making changes incrementally.
+\textbf{If your design does not work at the final checkoff, you will not get any credit for any optimization you did.}
+
+\newpage

@@ -1,0 +1,125 @@
+\section{\baseCPUTaskName: Implementation of RISC-V CPU}
+
+This checkpoint requires a fully functioning three stage RISC-V CPU.
+You need to demonstrate the BIOS functionality by loading the \verb|mmult| program over the UART,
+and successfully jumping to and executing the program.
+Additionally, please find the maximum achievable frequency
+and report the critical path in your implementation.
+
+
+\subsection{Testing}
+\label{testing}
+The design specified for this project is a complex system and debugging can be very difficult without tests that increase visibility of certain areas of the design.
+In assigning partial credit at the end for incomplete projects, we will look at testing as an indicator of progress.
+A reasonable order in which to complete your testing is as follows:
+
+\begin{enumerate}
+  \item Test your modules in isolation using testbenches that you write by yourself
+  \item Test one instruction at a time with a hand-written assembly (\verb|sim/asm_tb.v|)
+  \item Test that your CPU pipeline works with \verb|sim/cpu_tb.v|
+  \item Test with the RISC-V ISA test suite (\verb|make isa-tests|)
+  \item Test with other C programs in \verb|software/c_tests| (\verb|make c-tests|)
+  \item Test the CPU's memory mapped I/O with \verb|uart_parse_tb.v| and \verb|echo_tb.v|
+  \item Test the CPU's memory mapped I/O counters with \verb|mmio_counter_tb.v|
+  \item Test the CPU's memory mapped I/O with the BIOS software program with \verb|bios_tb.v|
+\end{enumerate}
+
+Details are explained in Section \ref{sec:testing}.
+You can run all tests other than \verb|mmio_counter_tb.v| by running
+\begin{minted}{bash}
+  ./script/run_all_sims.py
+\end{minted}
+in the \verb|hardware| directory.
+The stdout/stderr will be dumped in \verb|hardware/test_results|.
+
+Once you pass the BIOS testbench, you can implement and test your processor on the FPGA.
+
+
+\subsection{Programming}
+The build flow is identical to the labs.
+Run \verb|make synth| in the \verb|hardware| directory to synthesize \verb|z1top|,
+run \verb|make impl| to run place and route and bitstream generation,
+and run \verb|make program| (or \verb|make remote|) to program the bitstream onto the FPGA.
+
+Make sure you check the synthesis log in \verb|build/synth/synth.log|
+for unexpected warnings before proceeding to place and route.
+
+Execute the \verb|mmult| program on your FPGA, and verify its checksum.
+Find the maximum clock frequency that can meet the timing constraints.
+Look at the timing report and find the critical path in your implementation.
+Instructions are explained in Section \ref{sec:programming}.
+
+
+\subsection{How to Get Started}
+It might seem overwhelming to implement all the functionality that your processor must support. The best way to implement your processor is in small increments, checking the correctness of your processor at each step along the way. Here is a guide that should help you plan out Checkpoint 2:
+
+\begin{enumerate}
+\item \textit{First steps.}
+  Implement each of the components such as ALU.
+  Unit test them.
+\item \textit{Memory.}
+  In the beginning, only use the instruction memory in the instruction fetch stage and only use the data memory in the memory stage.
+  The BIOS memory is not used except in \verb|bios_tb.v|.
+\item \textit{Connect stages and pipeline.}
+  Connect your modules together and pipeline them.
+  At this point, you should be able to run integration tests using assembly tests for most R and I type instructions.
+\item \textit{Implement handling of control hazards.}
+  Stall (insert bubbles) your pipeline to resolve control hazards if any, associated with JAL, JALR, and branch instructions.
+  Don't worry about data hazards for now.
+  Test that control instructions work properly with assembly tests.
+\item \textit{Implement handling of data hazards.}
+  Implement stalling or forwarding to resolve data hazards.
+  Unless resolved by stalling, you have to forward to ALU inputs and memory data input.
+  Test comprehensively; most of your bugs will come from incomplete or faulty handling of data hazards.
+  At this point, your CPU should be able to pass the \verb|cpu_tb.v| test, \verb|isa-tests|, and \verb|c-tests|.
+\item \textit{Integrate UART.}
+  Add the UART to the memory stage, in parallel with the  instruction/data memories.
+  Detect when an instruction is accessing the UART and route the data to the UART accordingly.
+  Make sure that you are setting the UART ready/valid control signals properly
+  as you are feeding or retrieving data from it.
+  We have provided \verb|uart_parse_tb.v| and \verb|echo_tb.v| which performs a test of the UART.
+\item \textit{Add instruction and cycle counters.}
+  Add the memory mapped IO components, by first adding the cycle and instruction counters.
+  These are just 2 32-bit registers that your CPU should update on every cycle and every instruction respectively.
+  Verify it works using \verb|mmio_counter_tb.v|.
+\item \textit{Add BIOS memory reads.}
+  Add the BIOS memory to the memory stage to be able to load data from it.
+  Write assembly tests that contain some static data stored in the BIOS memory
+  and verify that you can read that data.
+\item \textit{Add Inst memory writes and reads.}
+  Add the instruction memory to the memory stage to be able to write data to it when executing inside the BIOS memory.
+  Also add the BIOS memory to the instruction fetch stage to be able to read instructions from it.
+  You may edit \verb|asm_tb.v| to test the functionality.
+  Change the destination of \verb|$readmemh| to the BIOS memory,
+  and update the initial program counter value, which is given to your CPU as a parameter.
+  You may also have to change \verb|0x10000000| in \verb|asm.ld| to \verb|0x40000000|.
+  Possible tests are first write instructions to the instruction memory,
+  and then jump (using jalr) to instruction memory to see that the right instructions are executed.
+  Test with \verb|bios_tb.v| to verify your CPU is fully functioning.
+\item \textit{Run the BIOS.}
+  If everything so far has gone well, program the FPGA.
+  Verify that the BIOS performs as expected.
+  As a precursor to this step, you might try to build a bitstream with the BIOS memory initialized with the echo program.
+  To do so, change the \verb|STRINGIFY_BIOS| macro function in \verb|z1top.v| to \verb|x/../software/echo/echo.hex|.
+\item \textit{Run matrix multiply.}
+  Load the \verb|mmult| program with the \verb|hex_to_serial.py| script (located under \texttt{scripts}),
+  and run \verb|mmult| on the FPGA. Verify that it returns the correct checksum.
+  Check the CPI when running the \verb|mmult| program.
+\end{enumerate}
+
+
+\subsection{How to Succeed in This Checkpoint}
+Start early and work on your design incrementally.
+Keep the block diagram up to date as you write Verilog.
+Unit test each component such as ALU, decoder, etc.
+It is a good idea to separate those components into different modules (in different Verilog files), while instantiating them in your CPU module.
+After testing your CPU pipeline with \verb|cpu_tb.v|, test with RISC-V ISA test suite and other C programs.
+If your CPU is not working properly, you should go back to the assembly test to figure out the bug.
+The final BIOS program is several 1000 lines of assembly and will be nearly impossible to debug by just looking at the waveform.
+
+The most valuable asset for this checkpoint will not be your GSIs but will be your fellow peers who you can compare notes with and discuss design aspects with in detail.
+However, do NOT under any circumstances share source code.
+
+Once you're tired, go home and \textit{sleep}. When you come back you will know how to solve your problem.
+
+\newpage

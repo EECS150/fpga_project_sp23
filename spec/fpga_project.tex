@@ -1,0 +1,76 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage[page,toc,title]{appendix}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{amsmath}
+\let\verbatiminput=\verbatimtabinput
+\def\verbatimtabsize{4\relax}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata, positioning}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{minted}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{pbox}
+\usepackage{makecell}
+\usepackage{adjustbox}
+\usepackage{color}
+\definecolor{rltred}{rgb}{0.75,0,0}
+\definecolor{rltgreen}{rgb}{0,0.5,0}
+\definecolor{rltblue}{rgb}{0,0,0.75}
+\definecolor{berkeleyblue}{rgb}{0.19,0.35,0.52}
+
+\usepackage[%pdftex,
+    colorlinks=true,
+    urlcolor=rltblue,               % \href{...}{...}
+    anchorcolor=rltbrightblue,
+    filecolor=rltgreen,             % \href*{...}
+    linkcolor=rltred,               % \ref{...} and \pageref{...}
+    menucolor=webdarkblue,
+    citecolor=webbrightgreen,
+    pagebackref,
+    pdfpagemode=UseNone,
+    bookmarksopen=true]{hyperref}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\newcommand{\instbit}[1]{\mbox{\scriptsize #1}}
+\newcommand{\instbitrange}[2]{~\instbit{#1} \hfill \instbit{#2}~}
+
+\input{defines.tex}
+
+
+
+\begin{document}
+
+\input{front_page.tex}
+
+\pagenumbering{arabic}
+\tableofcontents
+\newpage
+
+\input{introduction.tex}
+\input{grading.tex}
+\input{setup.tex}
+\input{chkpt1.tex}
+\input{design_spec.tex}
+\input{chkpt2.tex}
+\input{testing.tex}
+\input{programming.tex}
+
+\section{\branchPredictorTaskName: Branch Predictor}
+TBD
+\newpage
+
+\section{Optimization}
+TBD
+\newpage
+
+
+\begin{appendices}
+\input{bios.tex}
+\end{appendices}
+
+\end{document}

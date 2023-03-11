@@ -1,0 +1,34 @@
+\section{Project Report}
+\subsection{Overview}
+Upon completing the project, you will be required to submit a report detailing the progress of your EECS151/251A project.
+The report should document your final circuit at a high level, and describe the design process that led you to your implementation.
+We expect you to document and justify any tradeoffs you have made throughout the semester, as well as any pitfalls and lessons learned.
+Additionally, you will document any optimizations made to your system, the system's performance in terms of area (resource use), clock period, and CPI, and other information that sets your project apart from other submissions.
+
+The staff emphasizes the importance of the project report because it is the product you are able to take with you after completing the course.
+All of your hard work should reflect in the project report.
+Employers may (and have) ask to examine your EECS151/251A project report during interviews.
+Put effort into this document and be proud of the results.
+You may consider the report to be your medal for surviving EECS151/251A.
+
+\subsection{Details}
+You will turn in your project report PDF file on Gradescope by \textbf{\finalReportDueDate, 11:59PM}.
+The report should be around 8 pages total with around 5 pages of text and 3 pages of figures ($\pm$ a few pages on each), though this is not a strict limit.
+Ideally you should mix the text and figures together.
+
+Here is a suggested outline and page breakdown for your report.
+You do not need to strictly follow this outline, it is here just to give you an idea of what we will be looking for.
+
+\begin{itemize}
+  \item \textbf{Project Functional Description and Design Requirements}. Describe the design objectives of your project.  You don't need to go into details about the RISC-V ISA, but you need to describe the high-level design parameters (pipeline structure, memory hierarchy, etc.) for this version of the RISC-V. ($\approx$ 0.5 page)
+  \item \textbf{High-level organization}. How is your project broken down into pieces. Block diagram level-description. We are most interested in how you broke the CPU datapath and control
+  down into submodules, since the code for the later checkpoints will be pretty consistent across all groups. Please include an updated block diagram ($\approx$ 1 page).
+  \item \textbf{Detailed Description of Sub-pieces}. Describe how your circuits work. Concentrate here on novel or non-standard circuits. Also, focus your attention on the parts of the design that were not supplied to you by the teaching staff. ($\approx$ 2 pages).
+  \item \textbf{Status and Results}. What is working and what is not? At what frequency (50MHz or greater) does your design run? Do certain checkpoints work at a higher clock speed while others only run at 50 MHz? Please also provide the area utilization. Also include the CPI and minimum clock period of running \verb|mmult| for the various optimizations you made to your processor. This section is particularly important for non-working designs (to help us assign partial credit). ($\approx$ 1-2 pages).
+  \item \textbf{Conclusions}. What have you learned from this experience? How would you do it different next time? ($\approx$ 0.5 page).
+  \item \textbf{Division of Labor. This section is mandatory. Each team member will turn in a separate document from this part only}. The submission for this document will also be on Gradescope. How did you organize yourselves as a team. Exactly who did what? Did both partners contribute equally? Please note your team number next to your name at the top. ($\approx$ 0.5 page).
+\end{itemize}
+
+When we grade your report, we will grade for clarity, organization, and grammar.
+Both team members need to submit the Final Report assignment (same report content, but with different writeup for division of labor) to Gradescope. \textbf{We require your final report to be typeset using tools like \LaTeX, or Markdown, or Google Docs/MS Word/Apple Pages etc., but the file that you turn in must be a single PDF file.}
+
