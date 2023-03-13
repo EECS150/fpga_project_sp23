@@ -1,6 +1,6 @@
 \section{Introduction}
 The goal of this project is to familiarize EECS151/251A students with the methods and tools of digital design.
-Working alone or in a team of two, you will design and implement a 3-stage pipelined RISC-V CPU with a UART for tethering and a simple branch predictor.
+Working alone or in a team of two, you will design and implement a 3-stage pipelined RISC-V CPU with a UART for tethering and TBD.
 Finally, you will optimize your CPU.
 
 You will use Verilog to implement this system, targeting the Xilinx PYNQ platform (a PYNQ-Z1 development board with a Zynq 7000-series FPGA).
@@ -15,23 +15,26 @@ Good time management and good design organization is critical to your success.
 
 
 \subsection{Tentative Deadlines}
-The following is a brief description of each checkpoint and approximately how many weeks will be alloted to each one.
+The following is a brief description of each checkpoint.
 Note that this schedule is tentative and is subjected to change as the semester progresses.
 
 \begin{minipage}{\textwidth}
 \vspace{2mm}
 \begin{itemize}
-\item \textbf{\blockDiagramDueDate \space - \blockDiagramTaskName \space (\blockDiagramTimeAlloted)} -
+\item \textbf{\blockDiagramDueDate \space - \blockDiagramTaskName} -
   Draw a schematic of your processor's datapath and pipeline stages,
   and provide a brief write-up of your answers to the questions.
   Also commit your design documents (block diagram + write-up) to \verb|docs|.
+  {\it The deadline was pushed back because of spring break,
+  but you should finish this checkpoint as soon as possible
+  since \baseCPUTaskName \space is due \baseCPUDueDate.}
 
-\item \textbf{\baseCPUDueDate \space - \baseCPUTaskName \space (\baseCPUTimeAlloted)} -
+\item \textbf{\baseCPUDueDate \space - \baseCPUTaskName} -
   Implement a fully functional RISC-V processor core in Verilog.
   Your processor core should be able to run the \textbf{mmult} demo successfully.
 
-\item \textbf{\branchPredictorDueDate \space - \branchPredictorTaskName \space (\branchPredictorTimeAlloted)} -
-  Implement a branch predictor.
+\item \textbf{\branchPredictorDueDate \space - \branchPredictorTaskName} -
+  TBD.
   
 \item \textbf{\finalCheckoffDueDate \space - Final Checkoff} -
   Processor optimization and checkoff.
