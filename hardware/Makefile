@@ -20,6 +20,7 @@ ISA_TESTS_FST           := $(addprefix sim/isa/,$(subst .hex,.fst,$(ISA_TESTS_FI
 C_TESTS                 := $(subst /cygdrive/c/,C:/,$(shell find $(ABS_TOP)/../software/c_tests -type f -name "*.c"))
 C_TESTS_FILES           := $(notdir $(C_TESTS))
 C_TESTS_FST             := $(addprefix sim/c_tests/,$(subst .c,.fst,$(C_TESTS_FILES)))
+MYPORT                  ?= MYPORT_NOT_SET
 
 all: build/impl/$(TOP).bit
 
