@@ -2,13 +2,13 @@
 
 int32_t strcmp(const int8_t* s0, const int8_t* s1) {
 /*
-    uwrite_int8s("\n\rComparing ");
+    uwrite_int8s("\r\nComparing ");
     uwrite_int8s(s0);
     uwrite_int8s("|");
     uwrite_int8s("with ");
     uwrite_int8s(s1);
     uwrite_int8s("|");
-    uwrite_int8s("\n\r");
+    uwrite_int8s("\r\n");
 */
   for (uint32_t i = 0; ; i++) {
         if (s0[i] != s1[i]) {
