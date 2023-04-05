@@ -13,5 +13,6 @@ sim/*.log
 sim/*.out
 sim/isa
 sim/c_tests
+sim/small
 test_results
 build
