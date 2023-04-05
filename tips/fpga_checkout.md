@@ -7,7 +7,7 @@
 ### Mac
 Xilinx Vivado doesn't support MAC.
 You have to use Virtual Machine.
-Set up VirtualBox with CentOS7 or Ubuntu, and follow the Linux instruction below.
+Set up VirtualBox with CentOS7 or Ubuntu 20.04, and follow the Linux instruction below.
 
 If you have issue with the Hardware Manager (keep getting disconnected after some time), 
 try enabling USB3.0 setting in your VM setting to see if it helps. 
@@ -98,7 +98,7 @@ After plugging in the USB cable, run `dmesg` and observe the output:
 [7444636.941621] usb 1-2: Detected FT232RL
 [7444636.942062] usb 1-2: FTDI USB Serial Device converter now attached to ttyUSB0
 ```
-Then connect using sudo `screen /dev/ttyUSB0 115200`.
+Then connect using `sudo screen /dev/ttyUSB0 115200`.
 
 
 ### Windows
@@ -123,10 +123,17 @@ Open the session and you can communicate data with your FPGA through the opened 
 Note that the COM number and the device manager configuration may change every time you connect it.
 Remember to make sure it is configured properly in device manager.
 
-Moreover, in order to send the hex file to your FPGA, programmed with the BIOS program,
-you need to run the `hex_to_serial` python script in windows terminals e.g. Command Prompt or PowerShell.
-Edit the COM number in the script and execute it.
+
+
+## Loading Software onto FPGA
+To load and execute software on your FPGA,
+run the `hex_to_serial` python script in terminal (Command Prompt or PowerShell for Windows).
+You need to install `pyserial` to run this script, so run `sudo pip3 install pyserial`.
+
+If you are using Windows, edit the COM number in the script before running it.
+
 The hex files should be compiled with RISC-V compilers.
 Probably the easiest way is compile them in the instructional server and get the copy on your machine (use `scp` to copy the files).
-Make sure you close the PuTTy session with FPGA before running the script.
-You should open it after running the script, and type the jump instruction to start executing the loaded hex file.
+Make sure you close the screen (PuTTy) session with PMOD before running the script.
+You should reopen it after running the script, and type the jump instruction to start execution.
+You might need `sudo` when running the script.

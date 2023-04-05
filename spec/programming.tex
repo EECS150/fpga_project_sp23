@@ -50,15 +50,10 @@ reset your FPGA and try the mmult program in \verb|../softwar/mmult/mmult.hex|.
 This program computes $S=AB$, where $A$ and $B$ are $64 \times 64$ matrices.
 The program will print a checksum and the counters discussed in Memory Mapped IO.
 The correct checksum is \verb|0001f800|.
-If you do not get this, there is likely a problem in your CPU with one of the instructions that is used by the BIOS but not mmult.
+If nothing printed out, there is likely a problem in your CPU with one of the instructions that is used by the BIOS but not mmult.
 
 The program will also output the values of your instruction and cycle counters (in hex).
 These can be used to calculate the CPI for this program.
-Your target CPI should not be greater than 1.2.
-
-If your CPI exceeds this value, you will need to modify your datapath and pipeline
-to reduce the number of bubbles inserted for resolving control hazards
-(since they are the only source of extra latency in our processor).
 
 \subsection{Target Clock Frequency}
 By default, the CPU clock frequency is set at 50~MHz.

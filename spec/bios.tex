@@ -44,7 +44,7 @@ or
 
 Once you are in \verb|screen|, if you CPU design is working correctly you should be able to hit Enter
 and a carrot prompt \verb|'>'| will show up on the screen. If this doesn’t work, try hitting the reset
-button on the FPGA which is the center compass switch and hit enter. If you can’t get the BIOS
+button on the FPGA. If you can’t get the BIOS
 carrot to come up, then your design is not working and you will have to fix it.
 
 \subsection{Loading Your Own Programs}
@@ -85,9 +85,7 @@ reset button on your board to reset the program execution to the main method.
 The \verb|read_token| method continuously polls the UART for user input from the keyboard until it
 sees the character specified by ds. In the case of the BIOS, the termination character
 \verb|read_token| is called with is the 0xd character which corresponds to Enter.
-The \verb|read_token| method will then return the values that it received from the user. Note that
-there is no backspace option so if you make a mistake you will have to wait until the next
-command to fix it.
+The \verb|read_token| method will then return the values that it received from the user.
 
 \begin{figure}[H]
   \centering

@@ -14,5 +14,6 @@ sim/*.out
 sim/isa
 sim/c_tests
 sim/small
+scripts/__pycache__
 test_results
 build
