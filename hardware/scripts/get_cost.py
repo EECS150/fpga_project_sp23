@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-version = '1.0'
+version = '1.1'
 
 import os
 import argparse
@@ -17,6 +17,8 @@ elements = {'LUT6': 1713,
             'RAMS32': 857,
             'FDSE': 107,
             'LUT1': 429,
+            'MUXF7': 7,
+            'MUXF8': 7,
             'OBUFT': 0,
             'IBUF': 0,
             'FDCE': 107,
@@ -27,6 +29,7 @@ elements = {'LUT6': 1713,
             }
 
 def get_cost(f):
+  print('get_cost version ' + version)
   cost = 0
   for line in f:
     if line.startswith('|  Ref Name | Used | Functional Category |'):
