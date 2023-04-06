@@ -12,8 +12,8 @@ The following commands are available:
 \item \verb|jal <address>|: Jump to address (hex)
 \item \verb|[sw, sb, sh] <data> <address>|: Store data (hex) to address (hex).
 \item \verb|[lw, lbu, lhu] <address>|: Prints the data at the address (hex).
+\item \verb|run|: Jump to \verb|0x10000000|.
 \end{itemize}
-If your backspace doesn't work, try \verb|Ctrl-Backspace|
 
 As an example, running \verb|sw cafef00d 10000000| should write to the data memory
 and running \verb|lw 10000000| should print the output \verb|10000000: cafef00d|.
@@ -30,24 +30,31 @@ In addition to the command interface,
 the BIOS allows you to load programs to the CPU.
 With {\bf screen closed}, run:
 \begin{minted}{bash}
-  ./scripts/hex_to_serial.py <hex_file> <address>
+  ./scripts/hex_to_serial.py <hex_file>
 \end{minted}
-This script stores the hex file at the specified hex address.
-
-In order to run the software program,
-you need to write into both the data and instruction memories,
-remember to set the top nibble of the address to \verb|0x3| as follows:
+This script stores the hex file to the subsequent addresses from \verb|0x30000000|,
+which means data is written to both the data and instruction memories.
+You may first try loading the echo program by
 \begin{minted}{bash}
-  ./scripts/hex_to_serial.py ../software/echo/echo.hex 30000000
+  ./scripts/hex_to_serial.py ../software/echo/echo.hex
 \end{minted}
-Then, you should jump to the loaded instructions in your screen session by \verb|jal 10000000|.
+
+Then, jump to the loaded instructions in your screen session by \verb|run|.
+It is just an alias of \verb|jal 10000000|.
 In this case, as you loaded the echo program, you should see the characters you typed
 sent back and printed on your screen.
 
 After you make sure that your FPGA are executing the loaded program correctly,
-reset your FPGA and try the mmult program in \verb|../softwar/mmult/mmult.hex|.
+reset your FPGA (the rightmost button) and try the mmult program
+in \verb|../software/benchmark/mmult/mmult.hex|.
+For running benchmark programs, you can use another script:
+\begin{minted}{bash}
+  ./script/run_fpga.py <hex_file>
+\end{minted}
+This internally calls \verb|hex_to_serial.py| and issues \verb|run| command to begin execution.
+It will display the results from the serial tx line to stdout if the program successfully finishes.
 
-This program computes $S=AB$, where $A$ and $B$ are $64 \times 64$ matrices.
+The \verb|mmult| program computes $S=AB$, where $A$ and $B$ are $64 \times 64$ matrices.
 The program will print a checksum and the counters discussed in Memory Mapped IO.
 The correct checksum is \verb|0001f800|.
 If nothing printed out, there is likely a problem in your CPU with one of the instructions that is used by the BIOS but not mmult.
@@ -55,7 +62,7 @@ If nothing printed out, there is likely a problem in your CPU with one of the in
 The program will also output the values of your instruction and cycle counters (in hex).
 These can be used to calculate the CPI for this program.
 
-\subsection{Target Clock Frequency}
+\subsection{Target Clock Frequency}\label{sec:target_clock_frequency}
 By default, the CPU clock frequency is set at 50~MHz.
 It should be easy to meet timing at 50~MHz.
 Please try higher frequencies by decreasing the \verb|CPU_CLOCK_PERIOD| parameter

@@ -98,7 +98,6 @@ else:
 if args.run:
   cpi = get_cpi(args.port_name, args.com_name)
 elif args.cpi is None:
-  print('')
   cpi = get_cpi_sim()
 else:
   cpi = args.cpi
