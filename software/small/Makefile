@@ -1,4 +1,4 @@
-SUBDIRS := asm  bios  c_tests  echo  benchmark  riscv-isa-tests  uart_parse  small
+SUBDIRS := $(wildcard */.)
 
 all: $(SUBDIRS)
 

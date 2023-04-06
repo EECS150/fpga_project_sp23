@@ -99,6 +99,15 @@ You should copy some modules you designed from the labs, overwriting the provide
       It checks if your CPU can execute the instructions stored in the BIOS memory.
       The testbench also emulates user input sent over the serial rx line,
       and checks the BIOS message output obtained from the serial tx line.
+    \item \verb|small_tb.v|:
+      The testbench can be used to estimate the CPI of your design.
+      It works with a smaller version of benchmark
+      because the original benchmark is too large to do simulation.
+      It reports the result checksum, cycle count and instruction count,
+      and compares the checksum with a reference value.
+      The program is loaded to the instruction/data memories without using BIOS,
+      while the UART interface is
+      used to get the result checksum and counter values.
     \item \verb|mem_path.vh|:
       Specifies the location of register file and memories.
       Some testbenches refer to this file to edit/check their values.
@@ -106,10 +115,31 @@ You should copy some modules you designed from the labs, overwriting the provide
   \item \verb|scripts|:
     \begin{itemize}
       \item \verb|run_all_sims.py|:
-        Python script that runs all testbenches above other than \\
+        Runs all testbenches above other than \\
         \verb|mmio_counter_tb.v|.
       \item \verb|hex_to_serial.py|:
-        Python script that sends a hex file to the FPGA through the serial rx line.
+        Sends a hex file to the FPGA through the serial rx line.
+      \item \verb|run_fpga.py|:
+        Calls \verb|hex_to_serial| and executes the program on the FPGA.
+        It also prints out the result checksum and counter values.
+      \item \verb|get_fmax.py|:
+        Finds the CPU frequency from timing summary report.
+      \item \verb|get_cost.py|:
+        Calculates the cost of design from resource utilization report.
+        The cost is a weighted sum of element counts.
+        If your design uses elements that do not have cost assigned,
+        please let us know.
+      \item \verb|get_cpi.py|:
+        Runs simulation or FPGA to get the geomean CPI for the benchmark programs.
+        Simulation uses a smaller version of each benchmark,
+        so CPI obtained in simulation is just an estimate.
+        The final grade is based on the real CPI when running the original benchmarks on the FPGA.
+      \item \verb|fom.py|:
+        Calculates the figre of merits.
+        By default, it reads the newest set of reports for cost and fmax,
+        runs simulation for CPI, and displays the estimated FOM.
+        Change parameters (commandline flags) to specify the report location or
+        to calculate the real FOM through execution on the FPGA.
       \item \verb|*.tcl|:
         Scripts for Xilinx Vivado.
     \end{itemize}
@@ -140,10 +170,18 @@ You should copy some modules you designed from the labs, overwriting the provide
     The echo program, refer to the explanation for \verb|echo_tb.v| above.
   \item \verb|bios|:
     The BIOS program, which allows us to interact with our CPU via the UART.
-  \item \verb|mmult|:
-    This is a program to be run on the FPGA board.
-    It generates 2 matrices and multiplies them.
-    Then it returns a checksum to verify the correct result.
+  \item \verb|benchmark|:
+    \begin{itemize}
+    \item \verb|mmult|:
+      This is a benchmark program to be run on the FPGA board.
+      It generates 2 matrices and multiplies them.
+      Then it returns a checksum to verify the correct result.
+    \item \verb|bdd|:
+      This is another benchmark program.
+      It constructs binary decision diagrams for adder trees.
+    \end{itemize}
+  \item \verb|small|:
+    This directory contains a smaller version of each benchmark.
   \end{itemize}
 \item \verb|tips|
   \begin{itemize}

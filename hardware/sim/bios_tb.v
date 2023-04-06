@@ -95,7 +95,7 @@ module bios_tb();
                $time, cycle, char_out[8:1], expected_char, expected_char, test_status);
       end else begin
         $display("[time %t, sim. cycle %d] [Host (tb) <-- FPGA_SERIAL_TX] Got char 8'h%h, expected 8'h%h == %s [ %s ]",
-               $time, cycle, char_out[8:1], expected_char, "newline/CR", test_status);
+               $time, cycle, char_out[8:1], expected_char, "CR/LF", test_status);
       end
     end
   endtask
@@ -163,8 +163,8 @@ module bios_tb();
         fpga_to_host(8'h20); // '[space]'
 
         // message from BIOS program
-        fpga_to_host(8'h0a); // '\n'
         fpga_to_host(8'h0d); // '\r'
+        fpga_to_host(8'h0a); // '\n'
         fpga_to_host(8'h55); // 'U'
         fpga_to_host(8'h6e); // 'n'
         fpga_to_host(8'h72); // 'r'
@@ -191,8 +191,8 @@ module bios_tb();
         fpga_to_host(8'h63); // 'c'
         fpga_to_host(8'h64); // 'd'
 
-        fpga_to_host(8'h0a); // \n
         fpga_to_host(8'h0d); // \r
+        fpga_to_host(8'h0a); // \n
         fpga_to_host(8'h31); // 1
         fpga_to_host(8'h35); // 5
         fpga_to_host(8'h31); // 1
@@ -266,15 +266,19 @@ module bios_tb();
     if (`IMEM_PATH.mem[1] === 32'hcafeaaaa) begin
       $display("PASSED!");
     end
-    else
+    else begin
       $display("FAILED!");
+      num_failed_tests = num_failed_tests + 1;
+    end
 
     $display("Test Write to DMem");
     if (`DMEM_PATH.mem[1] === 32'hcafeaaaa) begin
       $display("PASSED!");
     end
-    else
+    else begin
       $display("FAILED!");
+      num_failed_tests = num_failed_tests + 1;
+    end
 
     // Test load command in BIOS mode
     $display("[TEST 4] Send [lw 30000004] command. Expect to see: 30000004:cafeaaaa");
@@ -380,8 +384,10 @@ module bios_tb();
     if (`RF_PATH.mem[3] === IMM[11:0]) begin
       $display("PASSED!");
     end
-    else
+    else begin
       $display("FAILED!");
+      num_failed_tests = num_failed_tests + 1;
+    end
 
     repeat (100) @(posedge clk);
     $display("BIOS testbench done! Num failed tests: %d", num_failed_tests);

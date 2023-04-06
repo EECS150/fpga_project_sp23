@@ -15,7 +15,7 @@ int8_t* read_token(int8_t* b, uint32_t n, int8_t* ds) {
     uint32_t i = 0;
     while (i < n) {
         int8_t ch = uread_int8();
-        if (ch == '\x08') { // backspace character
+        if (ch == '\x08' || ch == '\x7f') { // backspace character
             if (i == 0)
                 uwrite_int8('\x20'); // space
             else {
@@ -112,10 +112,15 @@ int main(void) {
 
             volatile uint8_t* p = (volatile uint8_t*)(address);
             *p = byte;
+        } else if (strcmp(input, "run") == 0) {
+            uint32_t address = 0x10000000;
+
+            entry_t start = (entry_t)(address);
+            start();
         } else {
-            uwrite_int8s("\n\rUnrecognized token: ");
+            uwrite_int8s("\r\nUnrecognized token: ");
             uwrite_int8s(input);
-            uwrite_int8s("\n\r");
+            uwrite_int8s("\r\n");
         }
     }
 

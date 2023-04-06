@@ -1,7 +1,7 @@
 \section{Introduction}
 The goal of this project is to familiarize EECS151/251A students with the methods and tools of digital design.
-Working alone or in a team of two, you will design and implement a 3-stage pipelined RISC-V CPU with a UART for tethering and TBD.
-Finally, you will optimize your CPU.
+Working alone or in a team of two, you will design and implement a 3-stage pipelined RISC-V CPU with a UART for tethering.
+After that, you will optimize your CPU to achieve a higher value of the form of merits.
 
 You will use Verilog to implement this system, targeting the Xilinx PYNQ platform (a PYNQ-Z1 development board with a Zynq 7000-series FPGA).
 The project will give you experience designing with RTL descriptions, resolving hazards in a simple pipeline, building interfaces, and teach you how to approach system-level optimization.
@@ -33,9 +33,6 @@ Note that this schedule is tentative and is subjected to change as the semester 
   Implement a fully functional RISC-V processor core in Verilog.
   Your processor core should be able to run the \textbf{mmult} demo successfully.
 
-\item \textbf{\branchPredictorDueDate \space - \branchPredictorTaskName} -
-  TBD.
-  
 \item \textbf{\finalCheckoffDueDate \space - Final Checkoff} -
   Processor optimization and checkoff.
     
@@ -50,16 +47,17 @@ Note that this schedule is tentative and is subjected to change as the semester 
 \subsection{Tentative Grading Rubric}
 \begin{framed}
 \begin{description}
-\item[70\%] {\bf Functionality} at the final checkoff.
+\item[50\%] {\bf Functionality} at the final checkoff.
   You need to show your design passes all testbenches
   and executes \verb|mmult| correctly on the FPGA board.
-\item[15\%] {\bf Optimization} at the final checkoff.
-  The quality of your design according to the figure of merit (TBD).
-  This score is contingent on implementing all the required functionality.
+\item[35\%] {\bf Optimization} at the final checkoff.
+  The quality of your design will be evaluated according to the figure of merit.
+  This score is contingent on implementing the correct functionality.
   A malfunctioning design will receive a zero in this category.
 \item[5\%] {\bf Checkpoints}.
-  You are graded on the functionality for each completed checkpoint at the checkpoint deadline.
-  The total of these scores makes up 5\% of your project grade.
+  The checkpoints are set to guide you to finish your design on time.
+  To encourage you to follow the timing,
+  checking off at each checkpoint on time makes up 5\% of your project grade in total.
   The weight of each checkpoint's score may vary.
 \item[10\%] {\bf Project report}.
   The final report summarizing your project.

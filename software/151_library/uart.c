@@ -16,6 +16,8 @@ int8_t uread_int8(void) {
     int8_t ch = URECV_DATA;
     if (ch == '\x0d') {
         uwrite_int8s("\r\n");
+    } else if(ch == '\x7f') {
+        uwrite_int8s("\x08");
     } else {
         uwrite_int8(ch);
     }
