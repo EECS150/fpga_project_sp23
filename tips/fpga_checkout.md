@@ -126,7 +126,7 @@ Remember to check it before running scripts.
 
 
 
-## Running Software onto FPGA
+## Running Software on FPGA
 To load and execute software on your FPGA,
 run the `run_fpga.py` python script in terminal (Command Prompt or PowerShell for Windows).
 You need to install `pyserial` to run this script, so run `sudo pip3 install pyserial`.
