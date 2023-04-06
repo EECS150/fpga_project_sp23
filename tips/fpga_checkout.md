@@ -69,7 +69,7 @@ If this is your first time, add the following line in your `bach.rc` in the serv
 extern MYPORT=<your port>
 ```
 Then restart the terminal.
-You may also need to `make clean-build` in your hardware repository.
+You may also need to `make clean-build` in the `hardware` directory.
 
 Launch `hw_server` (`hw_server.bat` in Windows) on your local machine. It is located in `<install_location>\Vivado_Lab\2021.1\bin`.
 Don't close the window while you're programming the FPGA.
@@ -106,9 +106,10 @@ First time you connect the PMOD to your computer, the device driver will be auto
 After installation, open "Device Manager" and find "USB Serial Port(COMx)" under "Ports (COM & LPT)",
 where x is a number assigned by your OS.
 We'll use this number later to set up the serial connection.
-Right click and open Properties.
+(This may be unnecessary, but if the PMOD does not work,
+open Properties by right clicking the device in Device Manager.
 In the "Port Settings" tab, make sure "Bits per second" is set to 115200.
-If not, change it to 115200 and press "OK" to save.
+If not, change it to 115200 and press "OK" to save.)
 
 You will communiate with your FPGA through this PMOD.
 We can set up connection to the PMOD using PuTTY.
@@ -121,19 +122,17 @@ Save the configuration if you want.
 Open the session and you can communicate data with your FPGA through the opened terminal.
 
 Note that the COM number and the device manager configuration may change every time you connect it.
-Remember to make sure it is configured properly in device manager.
+Remember to check it before running scripts.
 
 
 
-## Loading Software onto FPGA
+## Running Software onto FPGA
 To load and execute software on your FPGA,
-run the `hex_to_serial` python script in terminal (Command Prompt or PowerShell for Windows).
+run the `run_fpga.py` python script in terminal (Command Prompt or PowerShell for Windows).
 You need to install `pyserial` to run this script, so run `sudo pip3 install pyserial`.
-
-If you are using Windows, edit the COM number in the script before running it.
+You may need to specify your PMOD port or COM number by `--port_name` or `--com_name` option if it is different in your environment.
 
 The hex files should be compiled with RISC-V compilers.
 Probably the easiest way is compile them in the instructional server and get the copy on your machine (use `scp` to copy the files).
 Make sure you close the screen (PuTTy) session with PMOD before running the script.
-You should reopen it after running the script, and type the jump instruction to start execution.
 You might need `sudo` when running the script.
