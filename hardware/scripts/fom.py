@@ -42,6 +42,8 @@ parser.add_argument('-u', '--urpt', action='store', help='resource utilization r
 parser.add_argument('-t', '--trpt', action='store', help='timing summary report')
 
 parser.add_argument('-r', '--run', action='store_true', help='get real CPI by running on FPGA')
+parser.add_argument('--port_name', action='store', default='/dev/ttyUSB0')
+parser.add_argument('--com_name', action='store', default='COM11')
 
 parser.add_argument('-c', '--cost', action='store', type=int)
 parser.add_argument('-f', '--fmax', action='store', type=float, help='in MegaHertz, int or float')
@@ -74,6 +76,8 @@ elif os.path.isfile(surpt):
   u, t = open_rpts(surpt, strpt, args.cost, args.fmax)
 elif os.path.isfile(iurpt):
   u, t = open_rpts(iurpt, itrpt, args.cost, args.fmax)
+else:
+  u, t = None, None
 
 if u is None and args.cost is None:
   print('utilization report not found and cost not specified')
@@ -92,7 +96,7 @@ else:
   fmax = args.fmax
 
 if args.run:
-  cpi = get_cpi()
+  cpi = get_cpi(args.port_name, args.com_name)
 elif args.cpi is None:
   print('')
   cpi = get_cpi_sim()
@@ -107,6 +111,6 @@ print("CPI: {:.2f}".format(cpi))
 print('Cost: ' + str(cost))
 print('')
 if args.run:
-  print("FOM: {:.2f}".format("", fom))
+  print("FOM: {:.2f}".format(fom))
 else:
   print("FOM (estimate): {:.2f}".format(fom))
