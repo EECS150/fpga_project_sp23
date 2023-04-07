@@ -34,7 +34,6 @@ module cpu_tb();
 
   initial clk = 0;
   always #(CPU_CLOCK_PERIOD/2) clk = ~clk;
-  wire [31:0] csr;
   reg bp_enable = 1'b0;
 
   // Init PC with 32'h1000_0000 -- address space of IMem
@@ -129,7 +128,7 @@ module cpu_tb();
       current_result    = result;
       while (`RF_PATH.mem[rf_wa] !== result) begin
         current_output = `RF_PATH.mem[rf_wa];
-        @(posedge clk);
+        @(negedge clk);
       end
       cycle = 0;
       done = 1;
@@ -151,7 +150,7 @@ module cpu_tb();
       current_result    = result;
       while (`DMEM_PATH.mem[addr] !== result) begin
         current_output = `DMEM_PATH.mem[addr];
-        @(posedge clk);
+        @(negedge clk);
       end
       cycle = 0;
       done = 1;
@@ -161,8 +160,6 @@ module cpu_tb();
 
   integer i;
 
-  reg [31:0] num_cycles = 0;
-  reg [31:0] num_insts  = 0;
   reg [4:0]  RD, RS1, RS2;
   reg [31:0] RD1, RD2;
   reg [4:0]  SHAMT;
@@ -567,7 +564,8 @@ module cpu_tb();
     current_test_type = "CSRRW";
     done = 0;
     while (`CSR_PATH !== `RF_PATH.mem[1])
-      @(posedge clk);
+      @(negedge clk);
+    cycle = 0;
     done = 1;
 
     $display("[%d] Test %s passed!", current_test_id, current_test_type);
@@ -575,7 +573,9 @@ module cpu_tb();
     current_test_id = current_test_id + 1;
     current_test_type = "CSRRWI";
     done = 0;
-    wait (`CSR_PATH === IMM);
+    while (`CSR_PATH !== IMM)
+      @(negedge clk);
+    cycle = 0;
     done = 1;
 
     $display("[%d] Test %s passed!", current_test_id, current_test_type);
