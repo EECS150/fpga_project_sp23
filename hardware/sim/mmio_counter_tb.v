@@ -38,7 +38,6 @@ module mmio_counter_tb();
 
   initial clk = 0;
   always #(CPU_CLOCK_PERIOD/2) clk = ~clk;
-  wire [31:0] csr;
   reg bp_enable = 1'b0;
 
   // Init PC with 32'h1000_0000 -- address space of IMem
@@ -123,8 +122,6 @@ module mmio_counter_tb();
     begin
       display_result_rf(5'd7, "Cycle");
       display_result_rf(5'd8, "Instruction");
-      display_result_rf(5'd9, "Branch Instruction");
-      display_result_rf(5'd10, "Correct Branch Prediction");
     end
   endtask
 
@@ -141,15 +138,11 @@ module mmio_counter_tb();
     begin
       `RF_PATH.mem[3] = 32'h8000_0010;  // The cycle counter address
       `RF_PATH.mem[4] = 32'h8000_0014;  // The instruction counter address
-      `RF_PATH.mem[5] = 32'h8000_001c;  // The branch instruction counter address
-      `RF_PATH.mem[6] = 32'h8000_0020;  // The correct branch prediction counter address
 
       `IMEM_PATH.mem[INST_ADDR + 0] = {12'd0,   5'd3, `FNC_LW, 5'd7,  `OPC_LOAD};
       `IMEM_PATH.mem[INST_ADDR + 1] = {12'd0,   5'd4, `FNC_LW, 5'd8,  `OPC_LOAD};
-      `IMEM_PATH.mem[INST_ADDR + 2] = {12'd0,   5'd5, `FNC_LW, 5'd9,  `OPC_LOAD};
-      `IMEM_PATH.mem[INST_ADDR + 3] = {12'd0,   5'd6, `FNC_LW, 5'd10, `OPC_LOAD};
-      `IMEM_PATH.mem[INST_ADDR + 4] = {12'h51e, 5'd1, 3'b101,  5'd0,  `OPC_CSR};
-      `IMEM_PATH.mem[INST_ADDR + 5] = {12'h51e, 5'd0, 3'b101,  5'd0,  `OPC_CSR};
+      `IMEM_PATH.mem[INST_ADDR + 2] = {12'h51e, 5'd1, 3'b101,  5'd0,  `OPC_CSR};
+      `IMEM_PATH.mem[INST_ADDR + 3] = {12'h51e, 5'd0, 3'b101,  5'd0,  `OPC_CSR};
       INST_ADDR = INST_ADDR + 'd6;
     end
   endtask

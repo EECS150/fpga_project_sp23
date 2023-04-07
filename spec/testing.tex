@@ -103,15 +103,18 @@ The \verb|software/uart_parse/uart_parse.c| emulates the first few instructions 
 The testbench checks if it sends and receives the correct sequence.
 
 \subsection{MMIO Counter Test}
-This test executes NOPs and a for loop with 10 iterations,
+This test executes 10 NOPs and a for loop with 10 iterations,
 and prints out the values of counters for each.
 
-Remember that we don't include NOPs in the instruction count,
-and that only the completed instructions are counted
+You should not include the NOPs injected by your hardware in the instruction count.
+You may include software NOPs, but you don't have to.
+Note that in other classes you might be asked to include software NOPs in the instruction count.
+
+Remember that only the completed instructions are counted
 (the instructions that have passed the last stage of your pipeline).
 The expected values for the instruction counts are around
-2 (reset counters and load cycle count)
-and 23 (loop initialization and 2 * 10 for loop iterations besides the previous two).
+2 (reset counters and load cycle count) or 12 (with 10 software NOPs),
+and 23 (loop initialization and 2 * 10 for loop iterations besides the first reset and cycle count load).
 
 \subsection{BIOS Test}
 We have provided a BIOS program in \verb|software/bios| that allows you to interact
