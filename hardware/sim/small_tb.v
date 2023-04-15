@@ -54,7 +54,8 @@ module small_tb();
         char_out[j] = serial_out;
         #(BAUD_PERIOD);
       end
-      $write("%c", char_out[8:1]);
+      if ((char_out[8:1] >= 8'd32 && char_out[8:1] <= 8'd126) || char_out[8:1] === 8'd10 || char_out[8:1] === 8'd13)
+        $write("%c", char_out[8:1]);
       if(result[8*16-1:8*8] !== "Result: ")
         result = {result, char_out[8:1]};
     end
