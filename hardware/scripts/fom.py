@@ -49,6 +49,8 @@ parser.add_argument('-c', '--cost', action='store', type=int)
 parser.add_argument('-f', '--fmax', action='store', type=float, help='in MegaHertz, int or float')
 parser.add_argument('-p', '--cpi', action='store' , type=float)
 
+parser.add_argument('--old', action='store_true', help='use only bdd and mmult')
+
 args = parser.parse_args()
 
 if (args.urpt is None) != (args.trpt is None):
@@ -96,9 +98,9 @@ else:
   fmax = args.fmax
 
 if args.run:
-  cpi = get_cpi(args.port_name, args.com_name)
+  cpi = get_cpi(args.port_name, args.com_name, args.old)
 elif args.cpi is None:
-  cpi = get_cpi_sim()
+  cpi = get_cpi_sim(args.old)
 else:
   cpi = args.cpi
 

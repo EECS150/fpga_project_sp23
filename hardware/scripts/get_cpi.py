@@ -8,9 +8,12 @@ import argparse
 
 benchmark_path = '../software/benchmark'
 
-def get_cpi_sim():
+def get_cpi_sim(old):
   print('Running simulation...')
-  p = Popen('make small-tests -B', shell=True, stdout=PIPE, stderr=PIPE)
+  if old:
+    p = Popen('make old-small-tests -B', shell=True, stdout=PIPE, stderr=PIPE)
+  else:
+    p = Popen('make small-tests -B', shell=True, stdout=PIPE, stderr=PIPE)
   stdout, stderr = p.communicate()
   lines = stdout.decode('ascii', errors='ignore').splitlines()
   cyc_cnts = []
@@ -37,9 +40,12 @@ def get_cpi_sim():
   print('CPI (geomean): {:.2f}'.format(cpi))
   return cpi
 
-def get_cpi(port, com):
+def get_cpi(port, com, old):
   print('Running on FPGA...')
-  benchmarks = [f for f in os.listdir(benchmark_path) if os.path.isdir(os.path.join(benchmark_path, f))]
+  if old:
+    benchmarks = ['bdd', 'mmult']
+  else:
+    benchmarks = [f for f in os.listdir(benchmark_path) if os.path.isdir(os.path.join(benchmark_path, f))]
   cyc_cnts = []
   inst_cnts = []
   for benchmark in benchmarks:
