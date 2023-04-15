@@ -172,5 +172,12 @@ since benchmark sizes are different.
 That is, you should compare an estimated FOM with another estimated FOM,
 and an actual FOM with another actual FOM, not in a mixed manner.
 
+\subsection{Additional Benchmarks}
+We added 3 more benchmarks: \verb|ssort|, \verb|spath|, and \verb|tspex|.
+Now \verb|fom.py| runs 5 benchmarks to calculate the CPI by default.
+If you want to use only \verb|bdd| and \verb|mmult|, use \verb|--old| option.
+This \verb|--old| option was added just for your reference,
+and your final grade will be based on the FOM using the geomean CPI of all 5 benchmarks executed on the FPGA.
+
 
 \newpage
