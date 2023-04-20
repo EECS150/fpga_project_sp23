@@ -51,6 +51,8 @@ For running benchmark programs, you can use another script:
 \begin{minted}{bash}
   ./script/run_fpga.py <hex_file>
 \end{minted}
+For \verb|mmult|, run \verb|./script/run_fpga.py ../software/benchmark/mmult/mmult.hex|.
+
 This internally calls \verb|hex_to_serial.py| and issues \verb|run| command to begin execution.
 It will display the results from the serial tx line to stdout if the program successfully finishes.
 
@@ -61,29 +63,6 @@ If nothing printed out, there is likely a problem in your CPU with one of the in
 
 The program will also output the values of your instruction and cycle counters (in hex).
 These can be used to calculate the CPI for this program.
-
-\subsection{Target Clock Frequency}\label{sec:target_clock_frequency}
-By default, the CPU clock frequency is set at 50~MHz.
-It should be easy to meet timing at 50~MHz.
-Please try higher frequencies by decreasing the \verb|CPU_CLOCK_PERIOD| parameter
-(starting at 20, with a step size of 1) in \verb|hardware/src/z1top.v|.
-The unit of the clock period is ns,
-e.g. \verb|CPU_CLOCK_PERIOD = 10| means 10~ns clock period and 100~MHz frequency.
-Placement and route (\verb|make impl|) will take more time if you use a higher frequency.
-
-If you found the following line in \verb|build/impl/impl.log|
-(also displayed when \verb|make impl|), routing failed:
-\begin{minted}[breaklines]{bash}
-  CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
-\end{minted}
-The detailed report can be found at \verb|build/impl/post_route_timing_summary.rpt|.
-You may copy that file to the \verb|doc| directory for your record.
-The section \verb|Max Delay Paths| shows the critical path in your design.
-The slack is negative if routing failed, showing how much delay we need to reduce in the path
-to meet the timing constraints.
-The signals names may have been changed during optimization.
-You may refer to \verb|build/impl/post_route.v| or \verb|build/synth/post_synth.v|
-to figure out what they correspond to in your source code.
 
 
 \newpage

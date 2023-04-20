@@ -44,7 +44,7 @@ However, since place and route might take significant time as your design grows 
 to use the ``post\_synth\_utilization.rpt'' file for costs, estimate $F_{max}$ based on your synthesis target and available slack from the timing report, and use simulation to get the cycle and instruction counts.  However, becasuse the simulator is significantly slower than running on the actual FPGA, this approach will only work for small benchmark programs.
 
 
-It should go without saying that to improve the FOM, you will need to increase $F_{max}$, decrease $CPI$, decrease cost, or some combination of these.
+It should go without saying that to improve the FOM, you will need to increase $F_{max}$, decrease CPI, decrease cost, or some combination of these.
 You should be able to improve $F_{max}$ without substantially changing the microarchitecture of your design
 by shortening the critical path.
 Of course, after you improve one path, you might then want to optimize the next longest.
@@ -61,7 +61,7 @@ At a later date we will post approximate FOM grade targets (what FOM values corr
 Also, we will try to find a way to occasionally anonymously post updates on FOM values that other groups have achieved.
 
 
-\subsection{Scripts}
+\subsection{FOM Scripts}
 Several scripts are provided to calculate the FOM of your design.
 After compiling the programs (\verb|make| in the \verb|software| directory),
 you can simply run
@@ -69,9 +69,8 @@ you can simply run
   ./script/fom.py
 \end{minted}
 in the \verb|hardware| directory.
-It returns the estimated FOM based on CPIs for small benchmarks.
-Since we have multiple benchmark programs (we will add more later),
-the CPI is calculated as a geometric mean of all benchmarks.
+It returns an estimated FOM based on CPIs for the smaller version of benchmark programs.
+Since we have multiple benchmark programs, the geometric mean of their CPIs is used in the FOM formula.
 
 To get the actual FOM using the real CPI, use \verb|-r| option.
 It calls \verb|run_fpga.py| for all benchmarks to obtain the real CPI.
@@ -88,6 +87,9 @@ or the other one with \verb|-i| option.
 Use \verb|-u| option to specify the report in other location.
 Note that for the final grade, we will use \verb|./build/impl/post_place_utilization.rpt|.
 
+Your design must not use any latches (\verb|LDCE| and \verb|LDPE|).
+If your design is using other components not covered in the cost function, please let us know.
+
 The maximum frequency is automatically read from timing summary reports:
 \begin{itemize}
 \item \verb|./build/synth/post_synth_timing_summary.rpt|
@@ -97,16 +99,13 @@ The maximum frequency is automatically read from timing summary reports:
 By default, it uses the one in the same directory as the selected resorce utilization report.
 You can manually specify it with \verb|-t| option.
 Again, we will use \verb|./build/impl/post_rote_timing_summary.rpt| for the final grade.
-Do not forget to adjust \verb|CPU_CLOCK_PERIOD| in \verb|z1top.v| after you modified your datapath.
-The detailed instructions are in Sec. \ref{sec:target_clock_frequency}.
 
 You can manually override each of cost, $F_{max}$, and CPI with \verb|-c|, \verb|-f|, and \verb|-p| option, respectively.
 
 The following boxes show the log of \verb|fom.py| on unoptimized 2-stage pipeline for your reference.
-After some exploration, the maximum frequency for this design turned out to be 62.5~MHz (\verb|CPU_CLOCK_PERIOD=15|).
+Here, we are using 62.5~MHz clock frequency (\verb|CPU_CLOCK_PERIOD=15|).
 The estimated FOM was 30.54 as shown below.
-\usemintedstyle{bw}
-\begin{minted}[breaklines, frame=single]{bash}
+\begin{minted}[breaklines, frame=single, style=bw]{bash}
 $ ./scripts/fom.py
 Using build/impl/post_place_utilization.rpt (last modified: Wed Apr  5 03:06:32 2023)
 Using build/impl/post_route_timing_summary.rpt (last modified: Wed Apr  5 03:08:05 2023)
@@ -133,10 +132,12 @@ FOM (estimate): 30.54
 \end{minted}
 
 For the actual FOM, we have to run the benchmarks on the FPGA with \verb|-r| option.
-Here, as an example, we manually gave cost and $F_{max}$.
-\usemintedstyle{bw}
-\begin{minted}[breaklines, frame=single]{bash}
-$ ./scripts/fom.py -r -f 62.5 -c 1579727
+The log for the same design is shown below.
+The actual FOM was 29.58 for this design.
+\begin{minted}[breaklines, frame=single, style=bw]{bash}
+$ ./scripts/fom.py -r
+Using build/impl/post_place_utilization.rpt (last modified: Wed Apr  5 03:06:32 2023)
+Using build/impl/post_route_timing_summary.rpt (last modified: Wed Apr  5 03:08:05 2023)
 Running on FPGA...
 Sending command: file 30000000 6100
 Sent 6100/6100 bytes
@@ -171,6 +172,69 @@ As you can see, the real CPIs are different from what we got in simulation,
 since benchmark sizes are different.
 That is, you should compare an estimated FOM with another estimated FOM,
 and an actual FOM with another actual FOM, not in a mixed manner.
+
+
+\subsection{Target Clock Frequency}\label{sec:target_clock_frequency}
+By default, the CPU clock frequency is set at 50~MHz.
+It should be easy to meet timing at 50~MHz.
+Please try higher frequencies by decreasing the \verb|CPU_CLOCK_PERIOD| parameter
+(starting at 20, with a step size of 1) in \verb|hardware/src/z1top.v|.
+The unit of the clock period is ns,
+e.g. \verb|CPU_CLOCK_PERIOD = 10| means 10~ns clock period and 100~MHz frequency.
+Placement and route (\verb|make impl|) will take more time if you use a higher frequency.
+
+Vivado tries to meet the timing (setup time and hold time) based on the estimated delay.
+If it fails to meet the timing, it will display the following line (also saved in \verb|build/impl/impl.log|):
+\begin{minted}[breaklines, style=bw]{bash}
+  CRITICAL WARNING: [Timing 38-282] The design failed to meet the timing requirements. Please see the timing summary report for details on the timing violations.
+\end{minted}
+However, the delay estimation is not accurate where Vivado uses larger delay than the actual delay.
+In this project, your design may violate the timing constraints as long as it can execute benchmarks correctly on the FPGA board.
+If it runs correctly, you will find the following result checksums and instruction counts:
+\begin{itemize}
+\item \verb|bdd|
+  \begin{itemize}
+  \item \verb|Result: 000017a4|
+  \item \verb|Instruction Count: 003d2ef4|
+  \end{itemize}
+\item \verb|mmult|
+  \begin{itemize}
+  \item \verb|Result: 0001f800|
+  \item \verb|Instruction Count: 00c4c2ed|
+  \end{itemize}
+\end{itemize}
+Note that the instruction count may be slightly different depending on your pipeline stages.
+
+The detailed report for timing can be found at \verb|build/impl/post_route_timing_summary.rpt|.
+The section \verb|Max Delay Paths| shows the critical path in your design.
+The signals may have been renamed during optimization, but you should be able to guess what they were.
+You need to simplify or pipeline the critical path to increase the maximum working frequency.
+
+The slack is the amount of time between when the signal arrives at the data input of register and when the clock input of the register is triggered.
+It is negative if the timing constraints are vioalted.
+We observed that the FPGA works correctly even with -6~ns slack for the given benchmarks.
+
+
+\subsection{Controlling Vivado}
+Vivado behaves very differently even when only a small change is made in the RTL.
+Vivado performs timing optimization as well as area optimization during synthesis, which also involves optimization across module boundaries.
+Moreover there is a phase ordering problem, where optimizations are performed sequentially without knowing how much impact each optimization has on the subsequent optimizations.
+
+To control Vivado, you are allowed to modify the scripts: \verb|scripts/synth.tcl| and \verb|scripts/impl.tcl|.
+These scripts originally runs all commands with default settings.
+You should add an appropriate set of flags depending on your goal (FOM in our case).
+For example, if you're trying to reduce the cost, you should add \verb|-directive AreaOptimized_high| to the \verb|synth_design| command, while it could degrade the maximum frequency.
+All possible options are listed in the manual below.
+
+Synthesis: page 8- in \url{https://docs.xilinx.com/v/u/2021.1-English/ug901-vivado-synthesis}
+
+Implementation: \url{https://docs.xilinx.com/r/2021.1-English/ug904-vivado-implementation}
+
+You might wonder why the default options does not work perfectly, but this is a quite common problem among all EDA tools.
+Depending on your design, one optimization works much better than the others.
+EDA companies have a large support team work with their customers to find the best set of optimizations.
+Hardware design is an iterative process adjusting the EDA tools for the RTL while updating the RTL for the tools.
+Writing a functionally correct RTL is merely the first step of design, probably the easiest step.
 
 
 \newpage

@@ -116,7 +116,7 @@ You should copy some modules you designed from the labs, overwriting the provide
     \begin{itemize}
       \item \verb|run_all_sims.py|:
         Runs all testbenches above other than \\
-        \verb|mmio_counter_tb.v|.
+        \verb|mmio_counter_tb.v| and \verb|small_tb.v|.
       \item \verb|hex_to_serial.py|:
         Sends a hex file to the FPGA through the serial rx line.
       \item \verb|run_fpga.py|:
@@ -129,6 +129,7 @@ You should copy some modules you designed from the labs, overwriting the provide
         The cost is a weighted sum of element counts.
         If your design uses elements that do not have cost assigned,
         please let us know.
+        Note that your design must not have latches (\verb|LDCE| and \verb|LDPE|).
       \item \verb|get_cpi.py|:
         Runs simulation or FPGA to get the geomean CPI for the benchmark programs.
         Simulation uses a smaller version of each benchmark,

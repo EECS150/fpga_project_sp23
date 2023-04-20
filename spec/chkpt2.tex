@@ -3,8 +3,6 @@
 This checkpoint requires a fully functioning three stage RISC-V CPU.
 You need to demonstrate the BIOS functionality by loading the \verb|mmult| program over the UART,
 and successfully jumping to and executing the program.
-Additionally, please find the maximum achievable frequency
-and report the critical path in your implementation.
 
 
 \subsection{Testing}
@@ -44,9 +42,7 @@ and run \verb|make program| (or \verb|make remote|) to program the bitstream ont
 Make sure you check the synthesis log in \verb|build/synth/synth.log|
 for unexpected warnings before proceeding to place and route.
 
-Execute the \verb|mmult| program on your FPGA, and verify its checksum.
-Find the maximum clock frequency that can meet the timing constraints.
-Look at the timing report and find the critical path in your implementation.
+Execute the \verb|mmult| program on your FPGA, and verify its result checksum.
 Instructions are explained in Section \ref{sec:programming}.
 
 
@@ -72,6 +68,8 @@ It might seem overwhelming to implement all the functionality that your processo
   Unless resolved by stalling, you have to forward to ALU inputs and memory data input.
   Test comprehensively; most of your bugs will come from incomplete or faulty handling of data hazards.
   At this point, your CPU should be able to pass the \verb|cpu_tb.v| test, \verb|isa-tests|, and \verb|c-tests|.
+  Some people fail those tests because of not resetting pipeline registers properly.
+  Those registers need to reset one cycle after the reset signal of CPU turns off i.e. you need to delay it one cycle using a register.
 \item \textit{Integrate UART.}
   Add the UART to the memory stage, in parallel with the  instruction/data memories.
   Detect when an instruction is accessing the UART and route the data to the UART accordingly.
@@ -102,8 +100,8 @@ It might seem overwhelming to implement all the functionality that your processo
   As a precursor to this step, you might try to build a bitstream with the BIOS memory initialized with the echo program.
   To do so, change the \verb|STRINGIFY_BIOS| macro function in \verb|z1top.v| to \verb|x/../software/echo/echo.hex|.
 \item \textit{Run matrix multiply.}
-  Load the \verb|mmult| program with the \verb|hex_to_serial.py| script (located under \texttt{scripts}),
-  and run \verb|mmult| on the FPGA. Verify that it returns the correct checksum.
+  Run the \verb|mmult| program on the FPGA with the \verb|run_fpga.py| script (located under \texttt{scripts}).
+  Verify that it returns the correct result checksum.
   Check the CPI when running the \verb|mmult| program.
 \end{enumerate}
 
