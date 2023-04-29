@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-version = '1.1'
+version = '1.2'
 
 import os
 import argparse
@@ -15,6 +15,7 @@ elements = {'LUT6': 1713,
             'RAMD32': 857,
             'RAMB36E1': 0,
             'RAMS32': 857,
+            'RAMS64E': 1713,
             'FDSE': 107,
             'LUT1': 429,
             'MUXF7': 7,
